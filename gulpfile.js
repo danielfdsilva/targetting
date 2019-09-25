@@ -119,13 +119,13 @@ function javascript () {
     cache: {},
     packageCache: {},
     bundleExternal: false,
-    fullPaths: true,
-    plugin: [watchify]
+    fullPaths: true
   })
     .on('log', log);
 
   if (!isProd()) {
     brs
+      .plugin(watchify)
       .plugin(errorify)
       .on('update', bundler);
   }
