@@ -49,29 +49,7 @@ class SessionForm extends Component {
   constructor (props) {
     super(props);
 
-    this.onSaveClick = this.onSaveClick.bind(this);
-  }
-
-  onSaveClick () {
-    const { addSession, history } = this.props;
-    const id = generateSessionId();
-    addSession({
-      id,
-      name: 'Practice',
-      date: '2019-09-07',
-      distance: 18,
-      config: {
-        rounds: 10,
-        arrows: {
-          type: '6mm',
-          ids: ['0001', '0002', '0003']
-        },
-        target: 'standard-0.5'
-      },
-      hits: []
-    });
-
-    history.push(`/sessions/${id}`);
+    this.onFromSubmit = this.onFromSubmit.bind(this);
   }
 
   getInitialFormValues () {
@@ -88,6 +66,28 @@ class SessionForm extends Component {
     };
   }
 
+  onFromSubmit (values) {
+    const { addSession, history } = this.props;
+    const id = generateSessionId();
+    addSession({
+      id,
+      name: values.name,
+      date: values.date,
+      distance: values.distance,
+      config: {
+        rounds: values.rounds,
+        arrows: {
+          type: values.arrows.type,
+          ids: values.arrows.ids
+        },
+        target: values.target
+      },
+      hits: []
+    });
+
+    history.push(`/sessions/${id}`);
+  }
+
   onFormValidate (values) {
     /* eslint-disable-next-line prefer-const */
     let errors = {};
@@ -99,12 +99,14 @@ class SessionForm extends Component {
       errors.rounds = 'Rounds must be a integer number';
     }
 
-    errors.arrows = {
-      ids: values.arrows.ids.map(id => !id.trim()
-        ? 'Arrow identifier can\'t be empty'
-        : ''
-      )
-    };
+    const arrowIdErrors = values.arrows.ids.map(id => !id.trim()
+      ? 'Arrow identifier can\'t be empty'
+      : ''
+    );
+
+    if (arrowIdErrors.some(o => !!o)) {
+      errors.arrows = { ids: arrowIdErrors };
+    }
 
     return errors;
   }
@@ -117,12 +119,7 @@ class SessionForm extends Component {
           <Formik
             initialValues={this.getInitialFormValues()}
             validate={this.onFormValidate}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
-            }}
+            onSubmit={this.onFromSubmit}
           >
             {({
               values,
