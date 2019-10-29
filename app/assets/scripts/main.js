@@ -14,6 +14,7 @@ import history from './utils/history';
 import GlobalStyles from './styles/global';
 
 // Views
+import About from './components/about';
 import Home from './components/home';
 import UhOh from './components/uhoh';
 import SessionForm from './components/sessions/form';
@@ -30,6 +31,7 @@ const Root = () => (
           <GlobalStyles />
           <DrawerMenu />
           <Switch>
+            <Route exact path='/about' component={About} />
             <Route exact path='/' component={Home} />
             <Route exact path='/sessions' component={Home} />
             <Route exact path='/sessions/new' component={SessionForm} />
