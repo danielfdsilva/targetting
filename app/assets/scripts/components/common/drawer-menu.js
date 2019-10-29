@@ -9,7 +9,7 @@ import { rgba } from 'polished';
 import Button from '../../styles/button/button';
 import Heading from '../../styles/type/heading';
 
-import { antialiased } from '../../styles/helpers';
+import { antialiased, BodyUnscrollable } from '../../styles/helpers';
 import { themeVal, stylizeFunction } from '../../styles/utils/general';
 import { closeDrawer as closeDrawerAction } from '../../redux/global';
 import { divide, multiply } from '../../styles/utils/math';
@@ -124,6 +124,7 @@ class DrawerMenu extends React.PureComponent {
             onClick={this.onOverlayClick}
             isVisible={state === 'entered' || state === 'entering'}
           >
+            <BodyUnscrollable revealed={isOpen} />
             <Drawer isVisible={state === 'entered' || state === 'entering'}>
               <DrawerHeader>
                 <Button
