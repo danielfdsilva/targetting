@@ -15,7 +15,8 @@ color = {
   success: '#216869',
   warning: '#FFC700',
   info: '#5860FF',
-  shadow: rgba(color.base, 0.64),
+  mist: rgba(color.base, 0.24),
+  shadow: rgba(color.base, 0.48),
   alpha: rgba(color.base, 0.08)
 };
 

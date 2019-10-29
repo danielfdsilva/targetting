@@ -27,6 +27,7 @@ const Heading = styled.h1`
   font-family: ${themeVal('type.heading.family')};
   font-weight: ${themeVal('type.heading.weight')};
   text-transform: uppercase;
+  margin: 0;
 
   /* Size and line-height attribute */
   ${({ size }) => `

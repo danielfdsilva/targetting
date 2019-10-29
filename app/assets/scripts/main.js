@@ -19,6 +19,7 @@ import UhOh from './components/uhoh';
 import SessionForm from './components/sessions/form';
 import SessionSingle from './components/sessions/single';
 import ErrorBoundary from './fatal-error-boundary';
+import DrawerMenu from './components/common/drawer-menu';
 
 // Root component. Used by the router.
 const Root = () => (
@@ -27,6 +28,7 @@ const Root = () => (
       <ThemeProvider theme={theme.main}>
         <ErrorBoundary>
           <GlobalStyles />
+          <DrawerMenu />
           <Switch>
             <Route exact path='/' component={Home} />
             <Route exact path='/sessions' component={Home} />
