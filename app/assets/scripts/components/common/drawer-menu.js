@@ -19,7 +19,7 @@ const _rgba = stylizeFunction(rgba);
 const glsp = themeVal('layout.space');
 
 const MenuOverlay = styled.section`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
