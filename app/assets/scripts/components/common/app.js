@@ -10,19 +10,35 @@ import { appTitle, appDescription } from '../../config';
 import { openDrawer as openDrawerAction } from '../../redux/global';
 
 class App extends Component {
-  onMenuClick (state) {
+  constructor (props) {
+    super(props);
+
+    this.onMenuClick = this.onMenuClick.bind(this);
+  }
+
+  onMenuClick () {
     this.props.openDrawer();
   }
 
   render () {
-    const { pageTitle, className, children } = this.props;
+    const {
+      pageTitle,
+      className,
+      children,
+      backTo,
+      onBackClick,
+      renderActions
+    } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
     return (
       <div className={c('page', className)}>
         <MetaTags title={`${title}${appTitle} `} description={appDescription} />
         <AppBar
           title={pageTitle}
-          onMenuClick={this.onMenuClick.bind(this, true)}
+          onMenuClick={this.onMenuClick}
+          backTo={backTo}
+          onBackClick={onBackClick}
+          renderActions={renderActions}
         />
         <main className='page__body' role='main'>
           {children}
