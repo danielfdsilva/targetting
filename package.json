@@ -97,6 +97,7 @@
     "@babel/polyfill": "^7.4.4",
     "classnames": "^2.2.6",
     "d3": "^5.11.0",
+    "date-fns": "^2.6.0",
     "formik": "^1.5.8",
     "history": "^4.9.0",
     "lodash.clonedeep": "^4.5.0",
