@@ -17,30 +17,9 @@
     <!-- endbuild -->
 
     <style>
-      #outdated {
-        padding: 1.5rem;
-        text-align: center;
-        box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.48);
-      }
-
-      #outdated h6 {
-        font-size: 1rem;
-        margin: 0 0 0.5rem 0;
-      }
-
-      #outdated p {
-        margin: 0;
-      }
-
-      #btnCloseUpdateBrowser {
-        position: absolute;
-        font-size: 2rem;
-        line-height: 1rem;
-        top: 2rem;
-        right: 2rem;
-      }
-
-      .welcome-banner {
+      #welcome-banner {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -49,45 +28,32 @@
         left: 0;
         right: 0;
         bottom: 0;
+        z-index: 100;
+        background: #d62828;
+        color: #fff;
         margin: 0;
         padding: 1rem;
-      }
+        font-family: Poppins, sans-serif;
+        font-weight: bold;
+        font-size: 1.25rem;
 
-      .welcome-banner > img {
-        width: auto;
-        height: auto;
-        max-height: 128px;
-        max-width: 100%;
+        transition: all 320ms ease-in-out;
+      }
+      #welcome-banner.dismissed {
+        opacity: 0;
+        visibility: hidden;
       }
     </style>
 
   </head>
-  <body>
-
-    <div id="outdated">
-      <h6>Your browser is out-of-date!</h6>
-      <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update my browser now </a></p>
-      <a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a>
-    </div>
+    <!-- Welcome banner gets hidden by React -->
+    <p id='welcome-banner'>
+      Loading Targetting
+    </p>
 
     <div id="app-container">
       <!-- Content rendered here via React -->
-      <h1 class="welcome-banner"><img src="/assets/graphics/layout/ds-logo-pos.svg" alt="Afghanistan Elections banner" width="1440" height="320" /></h1>
-      <!-- Content rendered here via React -->
     </div>
-
-    <script>
-      var validBrowser = window.Promise !== undefined && window.Promise !== null && Object.prototype.toString.call(window.Promise.resolve()) === '[object Promise]';
-      var outdated = document.getElementById("outdated");
-      if (!validBrowser) {
-        document.getElementById("btnCloseUpdateBrowser").addEventListener('click', function() {
-          outdated.style.display = 'none';
-          return false;
-        });
-      } else {
-        outdated.remove();
-      }
-    </script>
 
     <!-- build:js /assets/scripts/vendor.js -->
     <script src="/assets/scripts/vendor.js"></script>
