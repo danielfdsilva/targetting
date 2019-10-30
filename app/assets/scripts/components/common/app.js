@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import styled, { css } from 'styled-components';
 import T from 'prop-types';
-import c from 'classnames';
 import { connect } from 'react-redux';
 
 import MetaTags from './meta-tags';
@@ -8,6 +8,17 @@ import AppBar from './app-bar';
 
 import { appTitle, appDescription } from '../../config';
 import { openDrawer as openDrawerAction } from '../../redux/global';
+
+const PageBody = styled.main`
+  /* Account for the height of the app bar */
+  padding-top: 4.5rem;
+
+  ${({ hasFab }) => hasFab &&
+    css`
+      /* If there's a FAB give it space */
+      padding-bottom: 7rem;
+    `}
+`;
 
 class App extends Component {
   constructor (props) {
@@ -24,6 +35,7 @@ class App extends Component {
     const {
       pageTitle,
       className,
+      hasFab,
       children,
       backTo,
       onBackClick,
@@ -31,7 +43,7 @@ class App extends Component {
     } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
     return (
-      <div className={c('page', className)}>
+      <div className={className}>
         <MetaTags title={`${title}${appTitle} `} description={appDescription} />
         <AppBar
           title={pageTitle}
@@ -40,18 +52,22 @@ class App extends Component {
           onBackClick={onBackClick}
           renderActions={renderActions}
         />
-        <main className='page__body' role='main'>
+        <PageBody role='main' hasFab={hasFab}>
           {children}
-        </main>
+        </PageBody>
       </div>
     );
   }
 }
 
 App.propTypes = {
+  hasFab: T.bool,
   openDrawer: T.func,
   className: T.string,
   pageTitle: T.string,
+  backTo: T.string,
+  onBackClick: T.func,
+  renderActions: T.func,
   children: T.node
 };
 
