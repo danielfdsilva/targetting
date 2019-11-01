@@ -72,6 +72,7 @@ class Target extends Component {
 }
 
 Target.propTypes = {
+  hits: T.array,
   rings: T.array,
   arrow: T.object,
   hitPosition: T.object,
@@ -236,7 +237,7 @@ var Chart = function (options) {
 
         arrowInteract
           .datum(datum)
-          .attr('r', d => rScale(d.thickness * 4))
+          .attr('r', d => _width * (1 / 3))
           // If the hit was skipped, the position won't be available. Set to 0
           // so it's rendered on the top-left.
           .attr('cx', d => cartesianX.invert(d.hit.cx) || 0)
