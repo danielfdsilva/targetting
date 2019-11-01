@@ -8,17 +8,9 @@ import { getTarget } from '../../utils/targets';
 
 import App from '../common/app';
 import Constrainer from '../../styles/constrainer';
-import Button from '../../styles/button/button';
 import Session from './session';
 import { CleanLink } from '../../utils/react';
-
-const AddSessionBtn = styled(Button)`
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 10;
-  border-radius: ${themeVal('shape.ellipsoid')};
-`;
+import FabButton from '../../styles/button/fab';
 
 const EmptyBlock = styled.div`
   border-radius: ${themeVal('shape.rounded')};
@@ -61,16 +53,13 @@ class Home extends Component {
     return (
       <App pageTitle='Sessions' hasFab>
         <Constrainer>
-          <AddSessionBtn
+          <FabButton
             as={CleanLink}
             useIcon='plus--small'
-            hideText
             to='/sessions/new'
-            variation='primary-raised-dark'
-            size='xlarge'
           >
             <span>Session</span>
-          </AddSessionBtn>
+          </FabButton>
 
           {
             this.props.sessions.length
