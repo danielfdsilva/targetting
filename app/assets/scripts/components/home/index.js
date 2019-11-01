@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { PropTypes as T } from 'prop-types';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -11,6 +10,7 @@ import App from '../common/app';
 import Constrainer from '../../styles/constrainer';
 import Button from '../../styles/button/button';
 import Session from './session';
+import { CleanLink } from '../../utils/react';
 
 const AddSessionBtn = styled(Button)`
   position: fixed;
@@ -62,7 +62,7 @@ class Home extends Component {
       <App pageTitle='Sessions' hasFab>
         <Constrainer>
           <AddSessionBtn
-            as={Link}
+            as={CleanLink}
             useIcon='plus--small'
             hideText
             to='/sessions/new'

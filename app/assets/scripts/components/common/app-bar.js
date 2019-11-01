@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import Constrainer from '../../styles/constrainer';
 import Button from '../../styles/button/button';
@@ -9,6 +9,7 @@ import Button from '../../styles/button/button';
 import { antialiased } from '../../styles/helpers';
 import { themeVal } from '../../styles/utils/general';
 import Heading from '../../styles/type/heading';
+import { CleanLink } from '../../utils/react';
 
 const PageHead = styled.header`
   ${antialiased()}
@@ -65,7 +66,7 @@ class AppBar extends React.PureComponent {
           <PageHeadline>
             {backTo ? (
               <AppBarButton
-                as={Link}
+                as={CleanLink}
                 to={backTo}
                 useIcon='arrow-left'
                 onClick={onBackClick}
