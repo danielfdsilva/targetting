@@ -6,14 +6,14 @@ const Prose = styled.div`
   font-size: ${themeVal('type.base.size')};                                     /* 16px */
   line-height: ${themeVal('type.base.line')};                                   /* 24px */
 
-  ol ol, ol ul, ul ol, ul ul {
-    margin-bottom: 0;
+  p {
+    margin-bottom: ${themeVal('layout.space')};
   }
 
   ul, ol, dl {
     padding: 0;
   }
-
+  
   ul {
     list-style-type: disc;
   }
@@ -28,13 +28,15 @@ const Prose = styled.div`
     margin-left: ${themeVal('layout.space')};
   }
 
-  .prose-editor > *,
-  > * {
+  ol ol, ol ul, ul ol, ul ul {
+    margin-bottom: 0;
+  }
+
+    > * {
     margin-bottom: ${multiply(themeVal('type.base.size'), themeVal('type.base.line'))}; /* same as line-height */
   }
 
-  .prose-editor > *:last-child,
-  > *:last-child {
+  > *:last-child{
     margin-bottom: 0;
   }
 `;
