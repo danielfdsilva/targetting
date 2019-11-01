@@ -142,7 +142,7 @@ var Chart = function (options) {
           .attr('cy', _width / 2)
           .attr('fill', d => d.color)
           .attr('stroke', '#444')
-          .attr('stroke-width', d => d.separator ? '2px' : '1x');
+          .attr('stroke-width', d => d.separator ? 2 : 1);
       },
 
       ghostRect: () => {
@@ -173,44 +173,94 @@ var Chart = function (options) {
         }
 
         ghost
+          .attr('cursor', () => _hitPosition ? 'default' : 'crosshair')
           .attr('width', _width)
           .attr('height', _width);
       },
 
       interactiveArrow: () => {
-        let arrow = $dataCanvas.select('circle.arrow');
+        let arrowG = $dataCanvas.select('g.arrow');
 
         if (!_hitPosition) {
-          if (!arrow.empty()) {
-            arrow.remove();
+          if (!arrowG.empty()) {
+            arrowG.remove();
           }
           return;
         }
 
-        if (arrow.empty()) {
-          arrow = $dataCanvas.append('circle')
+        if (arrowG.empty()) {
+          arrowG = $dataCanvas.append('g')
             .attr('class', 'arrow');
+          arrowG.append('circle')
+            .attr('class', 'arrow-display');
+          arrowG.append('circle')
+            .attr('class', 'arrow-ghost');
         }
 
         const clamp = clamper(0, _width);
 
-        arrow
-          .datum(_arrow)
+        const arrowInteract = arrowG.select('.arrow-ghost');
+        const arrowDisplay = arrowG.select('.arrow-display');
+
+        const datum = {
+          ..._arrow,
+          hit: _hitPosition
+        };
+
+        // We need to store the position of the arrow during the drag event
+        // because we need to use it to update the position base on the drag
+        // delta. This is needed because we may not be dragging the center
+        // of the circle, and we want to avoid a reposition on click.
+        /* eslint-disable-next-line prefer-const */
+        let arrowPosDirty = {
+          // If the hit was skipped, the position won't be available. Set to 0
+          // so it's rendered on the top-left.
+          cx: cartesianX.invert(_hitPosition.cx) || 0,
+          cy: cartesianY.invert(_hitPosition.cy) || 0
+        };
+
+        const updateDirtyPos = ({ dx, dy }) => {
+          arrowPosDirty.cx = clamp(arrowPosDirty.cx + dx);
+          arrowPosDirty.cy = clamp(arrowPosDirty.cy + dy);
+          return arrowPosDirty;
+        };
+
+        arrowDisplay
+          .datum(datum)
           .attr('r', d => rScale(d.thickness / 2))
-          .attr('cx', cartesianX.invert(_hitPosition.cx))
-          .attr('cy', cartesianY.invert(_hitPosition.cy))
-          .attr('fill', '#041334')
+          // If the hit was skipped, the position won't be available. Set to 0
+          // so it's rendered on the top-left.
+          .attr('cx', d => cartesianX.invert(d.hit.cx) || 0)
+          .attr('cy', d => cartesianY.invert(d.hit.cy) || 0)
+          .attr('fill', '#041334');
+
+        arrowInteract
+          .datum(datum)
+          .attr('r', d => rScale(d.thickness * 4))
+          // If the hit was skipped, the position won't be available. Set to 0
+          // so it's rendered on the top-left.
+          .attr('cx', d => cartesianX.invert(d.hit.cx) || 0)
+          .attr('cy', d => cartesianY.invert(d.hit.cy) || 0)
+          .attr('fill', 'none')
+          .attr('pointer-events', 'all')
+          .attr('cursor', 'grab')
+          .on('mousedown', function () { d3.select(this).attr('cursor', 'grabbing'); })
+          .on('mouseup', function () { d3.select(this).attr('cursor', 'grab'); })
           .call(d3.drag()
             .on('drag', function dragged (d) {
-              d3.select(this)
-                .attr('cx', clamp(d3.event.x))
-                .attr('cy', clamp(d3.event.y));
+              // Get the new position based on the change rather than the final
+              // position.
+              const { cx, cy } = updateDirtyPos(d3.event);
+              d3.select(this).attr('cx', cx).attr('cy', cy);
+              arrowDisplay.attr('cx', cx).attr('cy', cy);
             })
             .on('end', function dragended (d) {
-              const { x: xPos, y: yPos } = d3.event;
+              // Get the new position based on the change rather than the final
+              // position.
+              const { cx, cy } = updateDirtyPos(d3.event);
               const point = {
-                cx: cartesianX(xPos),
-                cy: cartesianY(yPos)
+                cx: cartesianX(cx),
+                cy: cartesianY(cy)
               };
               _onHitChange(point);
             })
@@ -280,6 +330,7 @@ var Chart = function (options) {
 
       // Redraw.
       layers.rings();
+      layers.ghostRect();
       layers.interactiveArrow();
       layers.registeredHits();
     };
@@ -296,13 +347,6 @@ var Chart = function (options) {
     var $dataCanvas = $svg.append('g')
       .attr('class', 'data-canvas')
       .attr('transform', `translate(${margin},${margin})`);
-
-    // $dataCanvas.append('rect')
-    //   .attr('class', 'debug')
-    //   .attr('x', 0)
-    //   .attr('y', 0)
-    //   .attr('fill', 'blue')
-    //   .attr('opacity', 0.2);
 
     _calcSize();
     updateSize();
