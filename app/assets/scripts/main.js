@@ -21,6 +21,7 @@ import SessionForm from './components/sessions/form';
 import SessionSingle from './components/sessions/single';
 import ErrorBoundary from './fatal-error-boundary';
 import DrawerMenu from './components/common/drawer-menu';
+import RegisterHits from './components/sessions/register-hits';
 
 // Root component. Used by the router.
 class Root extends React.Component {
@@ -44,7 +45,8 @@ class Root extends React.Component {
                 <Route exact path='/' component={Home} />
                 <Route exact path='/sessions' component={Home} />
                 <Route exact path='/sessions/new' component={SessionForm} />
-                <Route exact path='/sessions/:id' component={SessionSingle} />
+                <Route exact path='/sessions/:id/hits/:round' component={RegisterHits} />
+                <Route path='/sessions/:id' component={SessionSingle} />
                 <Route path='*' component={UhOh} />
               </Switch>
             </ErrorBoundary>

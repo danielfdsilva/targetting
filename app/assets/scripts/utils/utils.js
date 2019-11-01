@@ -74,6 +74,17 @@ export function generateSessionId () {
   return `${randomChars(3)}-${randomChars(3)}-${randomChars(3)}`;
 }
 
+export function collision (circle1, circle2) {
+  const { cx: cx1, cy: cy1, r: r1 } = circle1;
+  const { cx: cx2, cy: cy2, r: r2 } = circle2;
+
+  const distance = r1 + r2;
+  const x = cx1 - cx2;
+  const y = cy1 - cy2;
+
+  return distance >= Math.sqrt(x * x + y * y);
+}
+
 export const getSessionScore = (session) => {
   const { config: { target, rounds, arrows }, hits } = session;
   const maxTargetScore = getTargetMaxRange(target);
