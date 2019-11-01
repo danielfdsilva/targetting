@@ -80,3 +80,5 @@ export const targets = [
 ];
 
 export const getTarget = id => targets.find(t => t.id === id);
+
+export const getTargetMaxRange = id => getTarget(id).rings[0].points;

@@ -94,7 +94,7 @@ class Session extends Component {
               <dt>Date</dt>
               <SessionDate useIcon='calendar'>
                 <time dateTime={date}>
-                  {format(new Date(date), 'MMMM do yyyy')}
+                  {format(new Date(date), 'MMM do yyyy')}
                 </time>
               </SessionDate>
               <dt>Distance</dt>

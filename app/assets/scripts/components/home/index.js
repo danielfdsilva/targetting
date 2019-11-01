@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { themeVal } from '../../styles/utils/general';
 import { getTarget } from '../../utils/targets';
+import { getSessionScore } from '../../utils/utils';
 
 import App from '../common/app';
 import Constrainer from '../../styles/constrainer';
@@ -22,7 +23,7 @@ const EmptyBlock = styled.div`
 
 const SessionList = styled.ul`
   margin: -${themeVal('layout.space')};
-  
+
   li {
     box-shadow: 0 1px 0 0 ${themeVal('color.alpha')};
   }
@@ -32,19 +33,22 @@ class Home extends Component {
   renderSessionsList () {
     return (
       <SessionList>
-        {this.props.sessions.map(session => (
-          <li key={session.id}>
-            <Session
-              id={session.id}
-              name={session.name}
-              date={session.date}
-              distance={session.distance}
-              target={getTarget(session.config.target).name}
-              score={271}
-              maxPoints={300}
-            />
-          </li>
-        ))}
+        {this.props.sessions.map(session => {
+          const sessionScore = getSessionScore(session);
+          return (
+            <li key={session.id}>
+              <Session
+                id={session.id}
+                name={session.name}
+                date={session.date}
+                distance={session.distance}
+                target={getTarget(session.config.target).name}
+                score={sessionScore.score}
+                maxPoints={sessionScore.max}
+              />
+            </li>
+          );
+        })}
       </SessionList>
     );
   }
@@ -53,24 +57,18 @@ class Home extends Component {
     return (
       <App pageTitle='Sessions' hasFab>
         <Constrainer>
-          <FabButton
-            as={CleanLink}
-            useIcon='plus--small'
-            to='/sessions/new'
-          >
+          <FabButton as={CleanLink} useIcon='plus--small' to='/sessions/new'>
             <span>Session</span>
           </FabButton>
 
-          {
-            this.props.sessions.length
-              ? this.renderSessionsList()
-              : (
-                <EmptyBlock>
-                  <p>There are no sessions.</p>
-                  <p>Start by adding one.</p>
-                </EmptyBlock>
-              )
-          }
+          {this.props.sessions.length ? (
+            this.renderSessionsList()
+          ) : (
+            <EmptyBlock>
+              <p>There are no sessions.</p>
+              <p>Start by adding one.</p>
+            </EmptyBlock>
+          )}
         </Constrainer>
       </App>
     );
@@ -88,8 +86,7 @@ function mapStateToProps (state, props) {
 }
 
 function dispatcher (dispatch) {
-  return {
-  };
+  return {};
 }
 
 export default connect(
