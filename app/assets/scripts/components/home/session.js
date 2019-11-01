@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { themeVal, stylizeFunction } from '../../styles/utils/general';
 import { visuallyHidden, truncated } from '../../styles/helpers';
 import { multiply } from '../../styles/utils/math';
+import collecticon from '../../styles/collecticons';
 
 import Heading from '../../styles/type/heading';
 
@@ -39,7 +40,18 @@ const SessionScore = styled.div`
   }
 `;
 
-const SessionDate = styled.dd`
+const SessionDetail = styled.dd`
+  display: flex;
+  align-items: baseline;
+
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+  }
+`;
+
+const SessionDate = styled(SessionDetail)`
   flex-basis: 100%;
 `;
 
@@ -80,17 +92,17 @@ class Session extends Component {
             <Heading size='large'>{name}</Heading>
             <SessionDetails>
               <dt>Date</dt>
-              <SessionDate>
+              <SessionDate useIcon='calendar'>
                 <time dateTime={date}>
                   {format(new Date(date), 'MMMM do yyyy')}
                 </time>
               </SessionDate>
               <dt>Distance</dt>
-              <dd>{distance}m</dd>
+              <SessionDetail useIcon='compass'>{distance}m</SessionDetail>
               <dt>Target</dt>
-              <dd>
+              <SessionDetail useIcon='target'>
                 <span>{target}</span>
-              </dd>
+              </SessionDetail>
             </SessionDetails>
           </div>
 
