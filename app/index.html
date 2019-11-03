@@ -7,9 +7,9 @@
 
     <title>Targetting</title>
 
-    <!-- <link rel="icon" type="image/png" sizes="96x96" href="/assets/graphics/meta/favicon.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/graphics/meta/favicon.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/graphics/meta/android-chrome.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/graphics/meta/apple-touch-icon.png" /> -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/graphics/meta/apple-touch-icon.png" />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i" />
 
@@ -21,9 +21,10 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         display: flex;
+        flex-flow: column nowrap;
         align-items: center;
         justify-content: center;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
@@ -33,12 +34,20 @@
         color: #fff;
         margin: 0;
         padding: 1rem;
-        font-family: Poppins, sans-serif;
+        font-family: "Open Sans", sans-serif;
         font-weight: bold;
         font-size: 1.25rem;
 
         transition: all 320ms ease-in-out;
       }
+      
+      #welcome-banner h1 {
+        margin: 0 0 1rem 0;
+      }
+      
+      #welcome-banner img {
+      }
+      
       #welcome-banner.dismissed {
         opacity: 0;
         visibility: hidden;
@@ -46,10 +55,12 @@
     </style>
 
   </head>
+  <body>
     <!-- Welcome banner gets hidden by React -->
-    <p id='welcome-banner'>
-      Loading Targetting
-    </p>
+    <div id='welcome-banner'>
+      <h1><img src="/assets/graphics/layout/targetting_white.svg" alt="Targetting logotype" width="180" height="180" /></h1>
+      <p>Loading Targetting</p>
+    </div>
 
     <div id="app-container">
       <!-- Content rendered here via React -->

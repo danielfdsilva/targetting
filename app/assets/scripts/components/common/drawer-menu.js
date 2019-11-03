@@ -53,6 +53,19 @@ const Drawer = styled.nav`
     css`
       left: 0;
     `}
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: -3rem;
+    bottom: -3rem;
+    display: block;
+    width: 15rem;
+    height: 15rem;
+    background-image: url('/assets/graphics/layout/targetting_colored.svg');
+    background-repeat: no-repeat;
+    opacity: 0.32;
+  }
 `;
 
 const DrawerHeader = styled.header`
