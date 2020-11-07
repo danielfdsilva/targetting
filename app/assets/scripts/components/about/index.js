@@ -17,7 +17,7 @@ class About extends Component {
               height='96'
             />
             <p>Targetting is an archery scoring application.</p>
-            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which do not look even slightly believable.</p>
+            <p>Developed by <a href='http://danielfdsilva.com' title="Visit developer's website.">Daniel da Silva</a>. Code is Open Source (MIT license) and available on <a href='https://github.com/danielfdsilva/targetting' title='Visit application github repository'>Github</a>.</p>
           </Prose>
         </Constrainer>
       </App>
