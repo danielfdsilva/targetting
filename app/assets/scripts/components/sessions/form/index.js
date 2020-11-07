@@ -195,7 +195,7 @@ class SessionForm extends Component {
                       value={values.target}
                     >
                       {targetList.map(t => (
-                        <option key={t.id}>{t.name}</option>
+                        <option key={t.id} value={t.id}>{t.name}</option>
                       ))}
                     </FormSelect>
                   </FormGroup>
@@ -213,7 +213,7 @@ class SessionForm extends Component {
                           value={values.arrows.type}
                         >
                           {arrowsList.map(t => (
-                            <option key={t.id}>{t.name}</option>
+                            <option key={t.id} value={t.id}>{t.name}</option>
                           ))}
                         </FormSelect>
                       </FormGroup>
