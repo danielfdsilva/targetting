@@ -78,7 +78,7 @@ function serve () {
         replace: ''
       },
       { match: /{{appTitle}}/g, replace: appTitle },
-      { match: /{{appDescription}}/g, replace: appDescription },
+      { match: /{{appDescription}}/g, replace: appDescription }
     ]
   });
 
@@ -107,6 +107,7 @@ module.exports.default = gulp.series(
   collecticons,
   gulp.parallel(vendorScripts, javascript),
   gulp.parallel(html, imagesImagemin),
+  copyFiles,
   finish
 );
 
@@ -223,6 +224,14 @@ function collecticons () {
 // //////////////////////////////////////////////////////////////////////////////
 // --------------------------- Helper tasks -----------------------------------//
 // ----------------------------------------------------------------------------//
+
+function copyFiles () {
+  return gulp.src([
+    'app/**/*',
+    '!app/assets',
+    '!app/index.html'
+  ]).pipe(gulp.dest('dist'));
+}
 
 function finish () {
   return gulp.src('dist/**/*').pipe($.size({ title: 'build', gzip: true }));
