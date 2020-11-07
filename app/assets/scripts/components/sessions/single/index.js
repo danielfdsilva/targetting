@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
 import collecticon from '../../../styles/collecticons';
+import { deleteSession } from '../../../redux/sessions';
 
 import App from '../../common/app';
 import Analytics from './analytics';
@@ -31,6 +32,7 @@ const ActionExport = styled(DropMenuItem)`
 
 class SessionSingle extends Component {
   renderAppBarActions () {
+    const { deleteSession, session, history } = this.props;
     return (
       <Dropdown
         alignment='right'
@@ -43,7 +45,16 @@ class SessionSingle extends Component {
       >
         <DropMenu role='menu' iconified>
           <li>
-            <ActionDelete title='Delete session'>Delete</ActionDelete>
+            <ActionDelete
+              title='Delete session'
+              onClick={(e) => {
+                e.preventDefault();
+                deleteSession(session.id);
+                history.push('/');
+              }}
+            >
+              Delete
+            </ActionDelete>
           </li>
           <li>
             <ActionExport title='Export data (PDF)'>Export (PDF)</ActionExport>
@@ -80,14 +91,15 @@ class SessionSingle extends Component {
         pageTitle={session.name}
         backTo='/'
         hasFab={!isComplete}
-        renderActions={this.renderAppBarActions}
+        renderActions={this.renderAppBarActions.bind(this)}
       >
         <Constrainer>
           {!isComplete && (
             <FabButton
               as={CleanLink}
-              to={`/sessions/${match.params.id}/hits/${session.hits.length +
-                1}`}
+              to={`/sessions/${match.params.id}/hits/${
+                session.hits.length + 1
+              }`}
               useIcon='plus--small'
             >
               <span>Score</span>
@@ -110,21 +122,22 @@ class SessionSingle extends Component {
 
 SessionSingle.propTypes = {
   match: T.object,
-  session: T.object
+  session: T.object,
+  deleteSession: T.func,
+  history: T.object
 };
 
 function mapStateToProps (state, props) {
   const id = props.match.params.id;
   return {
-    session: state.sessions.find(s => s.id === id)
+    session: state.sessions.find((s) => s.id === id)
   };
 }
 
 function dispatcher (dispatch) {
-  return {};
+  return {
+    deleteSession: (...args) => dispatch(deleteSession(...args))
+  };
 }
 
-export default connect(
-  mapStateToProps,
-  dispatcher
-)(SessionSingle);
+export default connect(mapStateToProps, dispatcher)(SessionSingle);
