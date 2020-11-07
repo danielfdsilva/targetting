@@ -1,7 +1,7 @@
 export const targets = [
   {
-    id: 'standard-0.5',
-    name: 'Standard half size (100mm)',
+    id: 'compound100',
+    name: 'Compound 100mm (custom half-size)',
     rings: [
       {
         radius: 5,
@@ -39,8 +39,8 @@ export const targets = [
     ]
   },
   {
-    id: 'standard',
-    name: 'Standard Compound',
+    id: 'compound200',
+    name: 'Compound 200mm (18m)',
     rings: [
       {
         radius: 10,
