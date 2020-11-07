@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
@@ -14,9 +12,12 @@ const errorify = require('errorify');
 const historyApiFallback = require('connect-history-api-fallback');
 const through2 = require('through2');
 
+const { compile: collecticonsCompile } = require('collecticons-processor');
+
 const {
-  compile: collecticonsCompile
-} = require('collecticons-processor');
+  appTitle,
+  appDescription
+} = require('./app/assets/scripts/config/production').default;
 
 // /////////////////////////////////////////////////////////////////////////////
 // --------------------------- Variables -------------------------------------//
@@ -24,19 +25,20 @@ const {
 
 const bs = browserSync.create();
 
+const baseurl = process.env.BASEURL || '';
+
 // Environment
 // Set the correct environment, which controls what happens in config.js
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-process.env.DS_ENV = process.env.DS_ENV || process.env.NODE_ENV;
 
 // When being built by circle is set to staging unless we're in the prod branch
 if (process.env.CIRCLE_BRANCH) {
   if (process.env.CIRCLE_BRANCH === process.env.PRODUCTION_BRANCH) {
     process.env.NODE_ENV = 'production';
-    process.env.DS_ENV = 'production';
-  } else {
+  } else if (process.env.CIRCLE_BRANCH === process.env.STAGING_BRANCH) {
     process.env.NODE_ENV = 'staging';
-    process.env.DS_ENV = 'staging';
+  } else {
+    process.env.NODE_ENV = 'circle';
   }
 }
 
@@ -44,8 +46,11 @@ if (process.env.CIRCLE_BRANCH) {
 // ------------------------- Helper functions --------------------------------//
 // ---------------------------------------------------------------------------//
 
-const isProd = () => process.env.NODE_ENV === 'production';
+const isDev = () => process.env.NODE_ENV === 'development';
 const readPackage = () => JSON.parse(fs.readFileSync('package.json'));
+
+// Set the version in an env variable so it gets replaced in the config.
+process.env.APP_VERSION = readPackage().version;
 
 // /////////////////////////////////////////////////////////////////////////////
 // ------------------------- Callable tasks ----------------------------------//
@@ -64,18 +69,28 @@ function serve () {
         '/node_modules': './node_modules'
       },
       ghostMode: false,
-      middleware: [
-        historyApiFallback()
-      ]
-    }
+      middleware: [historyApiFallback()]
+    },
+    rewriteRules: [
+      {
+        // Replace the baseUrl placeholder on runtime.
+        match: /{{baseurl}}/g,
+        replace: ''
+      },
+      { match: /{{appTitle}}/g, replace: appTitle },
+      { match: /{{appDescription}}/g, replace: appDescription },
+    ]
   });
 
   // watch for changes
-  gulp.watch([
-    'app/*.html',
-    'app/assets/graphics/**/*',
-    '!app/assets/icons/collecticons/**/*'
-  ], bs.reload);
+  gulp.watch(
+    [
+      'app/*.html',
+      'app/assets/graphics/**/*',
+      '!app/assets/icons/collecticons/**/*'
+    ],
+    bs.reload
+  );
 
   gulp.watch('app/assets/icons/collecticons/**', collecticons);
   gulp.watch('package.json', vendorScripts);
@@ -84,23 +99,14 @@ function serve () {
 module.exports.clean = clean;
 module.exports.serve = gulp.series(
   collecticons,
-  gulp.parallel(
-    vendorScripts,
-    javascript
-  ),
+  gulp.parallel(vendorScripts, javascript),
   serve
 );
 module.exports.default = gulp.series(
   clean,
   collecticons,
-  gulp.parallel(
-    vendorScripts,
-    javascript
-  ),
-  gulp.parallel(
-    html,
-    imagesImagemin
-  ),
+  gulp.parallel(vendorScripts, javascript),
+  gulp.parallel(html, imagesImagemin),
   finish
 );
 
@@ -123,7 +129,7 @@ function javascript () {
   })
     .on('log', log);
 
-  if (!isProd()) {
+  if (isDev()) {
     brs
       .plugin(watchify)
       .plugin(errorify)
@@ -131,21 +137,28 @@ function javascript () {
   }
 
   function bundler () {
-    var watcher = brs.bundle();
+    var b = brs.bundle();
 
-    if (isProd()) {
-      watcher.on('error', function (e) { throw new Error(e); });
+    if (!isDev()) {
+      b.on('error', function (e) {
+        throw new Error(e);
+      });
     }
 
-    watcher
+    b = b
       .pipe(source('bundle.js'))
-      .pipe(buffer())
+      .pipe(buffer());
+
+    if (isDev()) {
       // Source maps.
-      .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.sourcemaps.write('./'))
+      b = b
+        .pipe($.sourcemaps.init({ loadMaps: true }))
+        .pipe($.sourcemaps.write('./'));
+    }
+
+    return b
       .pipe(gulp.dest('.tmp/assets/scripts'))
       .pipe(bs.stream());
-    return watcher;
   }
 
   return bundler();
@@ -171,17 +184,21 @@ function vendorScripts () {
   ];
   var vb = browserify({
     debug: true,
-
-    require: pkg.dependencies
-      ? Object.keys(pkg.dependencies).concat(extra)
-      : []
-  });
-  return vb.bundle()
+    require: pkg.dependencies ? Object.keys(pkg.dependencies).concat(extra) : []
+  })
+    .bundle()
     .on('error', log.bind(log, 'Browserify Error'))
     .pipe(source('vendor.js'))
-    .pipe(buffer())
-    .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe($.sourcemaps.write('./'))
+    .pipe(buffer());
+
+  if (isDev()) {
+    // Source maps.
+    vb = vb
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.sourcemaps.write('./'));
+  }
+
+  return vb
     .pipe(gulp.dest('.tmp/assets/scripts/'))
     .pipe(bs.stream());
 }
@@ -208,37 +225,39 @@ function collecticons () {
 // ----------------------------------------------------------------------------//
 
 function finish () {
-  return gulp.src('dist/**/*')
-    .pipe($.size({ title: 'build', gzip: true }));
+  return gulp.src('dist/**/*').pipe($.size({ title: 'build', gzip: true }));
 }
 
 // After being rendered by jekyll process the html files. (merge css files, etc)
 function html () {
-  return gulp.src('app/*.html')
+  return gulp
+    .src('app/*.html')
     .pipe($.useref({ searchPath: ['.tmp', 'app', '.'] }))
     .pipe(cacheUseref())
-    // Do not compress comparisons, to avoid MapboxGLJS minification issue
-    // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-286277540
-    // https://github.com/mishoo/UglifyJS2/issues/1609 -> Just until gulp-uglify updates
-    .pipe($.if('*.js', $.uglify({ compress: { comparisons: false, collapse_vars: false } })))
+    .pipe($.if('*.js', $.terser()))
     .pipe($.if('*.css', $.csso()))
     .pipe($.if(/\.(css|js)$/, $.rev()))
-    .pipe($.revRewrite())
+    // Add a prefix to all replacements so next line catches them.
+    .pipe($.revRewrite({ prefix: '{{baseurl}}' }))
+    .pipe($.replace('{{baseurl}}', baseurl))
+    .pipe($.replace('{{appTitle}}', appTitle))
+    .pipe($.replace('{{appDescription}}', appDescription))
     .pipe(gulp.dest('dist'));
 }
 
 function imagesImagemin () {
-  return gulp.src([
-    'app/assets/graphics/**/*'
-  ])
-    .pipe($.imagemin([
-      $.imagemin.gifsicle({ interlaced: true }),
-      $.imagemin.jpegtran({ progressive: true }),
-      $.imagemin.optipng({ optimizationLevel: 5 }),
-      // don't remove IDs from SVGs, they are often used
-      // as hooks for embedding and styling.
-      $.imagemin.svgo({ plugins: [{ cleanupIDs: false }] })
-    ]))
+  return gulp
+    .src(['app/assets/graphics/**/*'])
+    .pipe(
+      $.imagemin([
+        $.imagemin.gifsicle({ interlaced: true }),
+        $.imagemin.mozjpeg({ quality: 80, progressive: true }),
+        $.imagemin.optipng({ optimizationLevel: 5 }),
+        // don't remove IDs from SVGs, they are often used
+        // as hooks for embedding and styling.
+        $.imagemin.svgo({ plugins: [{ cleanupIDs: false }] })
+      ])
+    )
     .pipe(gulp.dest('dist/assets/graphics'));
 }
 
