@@ -37,11 +37,15 @@ class SessionSingle extends Component {
       <Dropdown
         alignment='right'
         direction='down'
-        triggerElement={
-          <AppBarButton useIcon='ellipsis-vertical' title='View options'>
+        triggerElement={(props) => (
+          <AppBarButton
+            useIcon='ellipsis-vertical'
+            title='View options'
+            {...props}
+          >
             Options
           </AppBarButton>
-        }
+        )}
       >
         <DropMenu role='menu' iconified>
           <li>

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 import { tint } from 'polished';
 
-import { arrayRange, arraySort } from '../../../utils/array';
 import { registerHit } from '../../../redux/sessions';
 import { getTarget } from '../../../utils/targets';
 import { getArrow } from '../../../utils/arrows';
@@ -14,12 +13,8 @@ import collecticon from '../../../styles/collecticons';
 import { multiply } from '../../../styles/utils/math';
 
 import App from '../../common/app';
-import Table from '../../../styles/table';
 import Constrainer from '../../../styles/constrainer';
 import Target from '../../common/target';
-import Button from '../../../styles/button/button';
-import TabsNav from '../../common/tabs-nav';
-import Dropdown, { DropMenuItem, DropMenu } from '../../common/dropdown';
 import { AppBarButton } from '../../common/app-bar';
 import UhOh from '../../uhoh';
 import Heading from '../../../styles/type/heading';
