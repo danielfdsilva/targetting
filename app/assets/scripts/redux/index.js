@@ -1,9 +1,11 @@
 'use strict';
 import { combineReducers } from 'redux';
 import sessions from './sessions';
+import global from './global';
 
 export const reducers = {
-  sessions
+  sessions,
+  global
 };
 
 export default combineReducers(reducers);

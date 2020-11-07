@@ -1,32 +1,73 @@
 import React, { Component } from 'react';
+import styled, { css } from 'styled-components';
 import T from 'prop-types';
-import c from 'classnames';
 import { connect } from 'react-redux';
 
 import MetaTags from './meta-tags';
-import PageHeader from './page-header';
+import AppBar from './app-bar';
 
 import { appTitle, appDescription } from '../../config';
+import { openDrawer as openDrawerAction } from '../../redux/global';
+
+const PageBody = styled.main`
+  /* Account for the height of the app bar */
+  padding-top: 4.5rem;
+
+  ${({ hasFab }) => hasFab &&
+    css`
+      /* If there's a FAB give it space */
+      padding-bottom: 7rem;
+    `}
+`;
 
 class App extends Component {
+  constructor (props) {
+    super(props);
+
+    this.onMenuClick = this.onMenuClick.bind(this);
+  }
+
+  onMenuClick () {
+    this.props.openDrawer();
+  }
+
   render () {
-    const { pageTitle, className, children } = this.props;
+    const {
+      pageTitle,
+      className,
+      hasFab,
+      children,
+      backTo,
+      onBackClick,
+      renderActions
+    } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
     return (
-      <div className={c('page', className)}>
-        <PageHeader />
+      <div className={className}>
         <MetaTags title={`${title}${appTitle} `} description={appDescription} />
-        <main className='page__body' role='main'>
+        <AppBar
+          title={pageTitle}
+          onMenuClick={this.onMenuClick}
+          backTo={backTo}
+          onBackClick={onBackClick}
+          renderActions={renderActions}
+        />
+        <PageBody role='main' hasFab={hasFab}>
           {children}
-        </main>
+        </PageBody>
       </div>
     );
   }
 }
 
 App.propTypes = {
+  hasFab: T.bool,
+  openDrawer: T.func,
   className: T.string,
   pageTitle: T.string,
+  backTo: T.string,
+  onBackClick: T.func,
+  renderActions: T.func,
   children: T.node
 };
 
@@ -34,11 +75,11 @@ function mapStateToProps (state, props) {
   return {};
 }
 
-function dispatcher (dispatch) {
-  return {};
-}
+const mapDispatchToProps = {
+  openDrawer: openDrawerAction
+};
 
 export default connect(
   mapStateToProps,
-  dispatcher
+  mapDispatchToProps
 )(App);

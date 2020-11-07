@@ -1,0 +1,109 @@
+# ssh-keygen -m pem -t rsa -b 4096 -C danielfdsilva/targetting -f deploy_key
+
+# YAML anchors for base definitions
+base_def: &base_def
+  docker:
+    - image: node:12
+  working_directory: ~/repo
+  environment:
+    - DEVELOPMENT_BRANCH: develop
+    - PRODUCTION_BRANCH: master
+    - GH_REF: git@github.com:danielfdsilva/targetting.git
+    - GH_NAME: "Circle-CI"
+    - GH_EMAIL: "circle@danielfdsilva.com"
+
+restore_cache_def: &restore_cache_def
+  # Download and cache dependencies
+  keys:
+  - v1-dependencies-{{ checksum "package.json" }}
+  - v1-dependencies-  # fallback if checksum fails
+
+##
+## START Circle CI configuration
+##
+
+version: 2.1
+jobs:
+  prepare:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+  lint:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - run: yarn lint
+      # - run: yarn lint:css
+  test:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - run: yarn test
+  build:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - run: yarn build
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+              - dist/*
+  deploy-gh:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - attach_workspace:
+          at: /workspace
+      - add_ssh_keys:
+          fingerprints:
+            - "9a:e3:92:3b:13:82:55:f2:c5:51:6d:85:66:66:0b:33"
+      - run:
+          name: Deploy to GH Pages
+          command: |
+            cd /workspace/dist
+            git init
+            git config user.name "$GH_NAME"
+            git config user.email "$GH_EMAIL"
+            git add .
+            git commit -m "CI deploy [skip ci]"
+            git remote add origin $GH_REF
+            git push origin --force --quiet HEAD:gh-pages
+            rm -rf .git
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - prepare
+      - lint:
+          requires:
+            - prepare
+      - test:
+          requires:
+            - prepare
+      - build:
+          requires:
+            - prepare
+      - deploy-gh:
+          requires:
+            - lint
+            - test
+            - build
+          filters:
+            branches:
+              only: master

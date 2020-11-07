@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import { PropTypes as T } from 'prop-types';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import collecticon from '../../styles/collecticons';
+import { themeVal } from '../../styles/utils/general';
+import { getTarget } from '../../utils/targets';
+import { getSessionScore } from '../../utils/utils';
 
 import App from '../common/app';
-import Table from '../../styles/table';
 import Constrainer from '../../styles/constrainer';
-import Button from '../../styles/button/button';
-import Heading from '../../styles/type/heading';
-import { themeVal } from '../../styles/utils/general';
-
-const AddSessionBtn = styled(Button)`
-  &::before {
-    ${collecticon('plus--small')}
-  }
-`;
+import Session from './session';
+import { CleanLink } from '../../utils/react';
+import FabButton from '../../styles/button/fab';
 
 const EmptyBlock = styled.div`
   border-radius: ${themeVal('shape.rounded')};
@@ -27,53 +21,54 @@ const EmptyBlock = styled.div`
   color: ${themeVal('color.shadow')};
 `;
 
+const SessionList = styled.ul`
+  margin: -${themeVal('layout.space')};
+
+  li {
+    box-shadow: 0 1px 0 0 ${themeVal('color.alpha')};
+  }
+`;
+
 class Home extends Component {
-  renderSessionsTable () {
+  renderSessionsList () {
     return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Session</th>
-            <th>Date</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.sessions.map(session => (
-            <tr key={session.id}>
-              <td><Link to={`/sessions/${session.id}`}>{session.name}</Link></td>
-              <td>{session.date}</td>
-              <td>--<small>300</small></td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <SessionList>
+        {this.props.sessions.map(session => {
+          const sessionScore = getSessionScore(session);
+          return (
+            <li key={session.id}>
+              <Session
+                id={session.id}
+                name={session.name}
+                date={session.date}
+                distance={session.distance}
+                target={getTarget(session.config.target).name}
+                score={sessionScore.score}
+                maxPoints={sessionScore.max}
+              />
+            </li>
+          );
+        })}
+      </SessionList>
     );
   }
 
   render () {
     return (
-      <App>
+      <App pageTitle='Sessions' hasFab>
         <Constrainer>
-          <Heading>Sessions</Heading>
-          <AddSessionBtn
-            as={Link}
-            to='/sessions/new'
-            variation='primary-raised-dark'
-          >
-            Session
-          </AddSessionBtn>
+          <FabButton as={CleanLink} useIcon='plus--small' to='/sessions/new'>
+            <span>Session</span>
+          </FabButton>
 
-          {
-            this.props.sessions.length
-              ? this.renderSessionsTable()
-              : (
-                <EmptyBlock>
-                  <p>There are no sessions.</p>
-                  <p>Start by adding one.</p>
-                </EmptyBlock>
-              )
-          }
+          {this.props.sessions.length ? (
+            this.renderSessionsList()
+          ) : (
+            <EmptyBlock>
+              <p>There are no sessions.</p>
+              <p>Start by adding one.</p>
+            </EmptyBlock>
+          )}
         </Constrainer>
       </App>
     );
@@ -91,8 +86,7 @@ function mapStateToProps (state, props) {
 }
 
 function dispatcher (dispatch) {
-  return {
-  };
+  return {};
 }
 
 export default connect(

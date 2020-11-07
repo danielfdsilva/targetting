@@ -1,4 +1,4 @@
-import { css } from 'styled-components';
+import { css, createGlobalStyle } from 'styled-components';
 
 export const antialiased = () => css`
   -webkit-font-smoothing: antialiased;
@@ -29,10 +29,14 @@ export const truncated = () => css`
   text-overflow: ellipsis;
 `;
 
+export const visuallyDisabled = () => css`
+  opacity: 0.48;
+  cursor: not-allowed;
+`;
+
 export const disabled = () => css`
   opacity: 0.48;
   pointer-events: none;
-  cursor: not-allowed;
 `;
 
 export const unscrollableY = () => css`
@@ -41,4 +45,12 @@ export const unscrollableY = () => css`
 
 export const unscrollableX = () => css`
   overflow-x: hidden;
+`;
+
+export const BodyUnscrollable = createGlobalStyle`
+  ${({ revealed }) => revealed && css`
+    body {
+      overflow-y: hidden;
+    }
+  `}
 `;

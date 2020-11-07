@@ -29,7 +29,7 @@ export default function sessionsReducer (state = initialSessionsState, action) {
     }
     case DELETE_SESSION: {
       const { id } = action;
-      return state.filter(s => s.id === id);
+      return state.filter(s => s.id !== id);
     }
     // Session specific reducers:
     case REGISTER_HIT: {

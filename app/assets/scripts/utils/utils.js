@@ -1,5 +1,6 @@
 'use strict';
 import get from 'lodash.get';
+import { getTargetMaxRange } from './targets';
 
 /**
  * Gets the given path from the state or return the default:
@@ -72,3 +73,31 @@ function randomChars (num) {
 export function generateSessionId () {
   return `${randomChars(3)}-${randomChars(3)}-${randomChars(3)}`;
 }
+
+export function collision (circle1, circle2) {
+  const { cx: cx1, cy: cy1, r: r1 } = circle1;
+  const { cx: cx2, cy: cy2, r: r2 } = circle2;
+
+  const distance = r1 + r2;
+  const x = cx1 - cx2;
+  const y = cy1 - cy2;
+
+  return distance >= Math.sqrt(x * x + y * y);
+}
+
+export const getSessionScore = (session) => {
+  const { config: { target, rounds, arrows }, hits } = session;
+  const maxTargetScore = getTargetMaxRange(target);
+  const maxScore = rounds * arrows.ids.length * maxTargetScore;
+
+  const total = hits.reduce((tot, ht) => {
+    if (!ht.length) return tot;
+    // Sum points
+    return tot + ht.reduce((sum, v) => sum + (v ? v.value : 0), 0);
+  }, 0);
+
+  return {
+    score: total,
+    max: maxScore
+  };
+};
