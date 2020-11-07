@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { PropTypes as T } from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Formik, FieldArray } from 'formik';
 import get from 'lodash.get';
