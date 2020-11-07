@@ -61,7 +61,9 @@ class SessionSingle extends Component {
             </ActionDelete>
           </li>
           <li>
-            <ActionExport title='Export data (PDF)'>Export (PDF)</ActionExport>
+            <ActionExport title='Export data (PDF)' disabled>
+              Export (PDF)
+            </ActionExport>
           </li>
         </DropMenu>
       </Dropdown>

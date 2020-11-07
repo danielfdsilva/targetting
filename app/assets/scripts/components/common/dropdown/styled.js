@@ -4,6 +4,7 @@ import { themeVal } from '../../../styles/utils/general';
 import { glsp, _rgba, _tint } from '../../../styles/utils/theme-values';
 import { headingAlt } from '../../../styles/type/heading';
 import collecticon from '../../../styles/collecticons';
+import { disabled } from '../../../styles/helpers';
 
 const transitions = {
   up: {
@@ -228,6 +229,12 @@ export const DropMenuItem = styled.a`
       &:before {
         ${collecticon(useIcon)}
       }
+    `}
+
+  /* Disabled */
+    ${({ disabled: dis }) => dis &&
+    css`
+      ${disabled()}
     `}
 `;
 
