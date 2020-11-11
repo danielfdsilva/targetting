@@ -10,7 +10,7 @@ export const targets = [
       },
       {
         radius: 10,
-        points: 9,
+        points: 10,
         color: '#fffaad'
       },
       {
@@ -49,7 +49,7 @@ export const targets = [
       },
       {
         radius: 20,
-        points: 9,
+        points: 10,
         color: '#fffaad'
       },
       {
