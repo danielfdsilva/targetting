@@ -17,6 +17,7 @@ import { AppBarButton } from '../../common/app-bar';
 import FabButton from '../../../styles/button/fab';
 import UhOh from '../../uhoh';
 import { CleanLink } from '../../../utils/react';
+import Overview from './overview';
 
 const ActionDelete = styled(DropMenuItem)`
   ::before {
@@ -79,6 +80,11 @@ class SessionSingle extends Component {
 
     const tabNavigation = [
       {
+        to: `${match.url}/overview`,
+        label: 'Overview',
+        exact: true
+      },
+      {
         to: match.url,
         label: 'Results',
         exact: true
@@ -113,6 +119,9 @@ class SessionSingle extends Component {
           )}
           <TabsNav items={tabNavigation} />
           <Switch>
+            <Route exact path={`${match.path}/overview`}>
+              <Overview session={session} />
+            </Route>
             <Route exact path={`${match.path}/analytics`}>
               <Analytics session={session} />
             </Route>

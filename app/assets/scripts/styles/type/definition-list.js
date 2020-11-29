@@ -1,10 +1,15 @@
 import styled, { css } from 'styled-components';
-import { rgba, clearFix } from 'polished';
+import { rgba } from 'polished';
 
-import { divide } from '../utils/math';
 import { themeVal } from '../utils/general';
+import { glsp } from '../utils/theme-values';
 
 const Dl = styled.dl`
+  display: grid;
+  grid-gap: ${glsp()};
+  grid-template-columns: 1fr;
+  align-items: baseline;
+
   dt {
     font-feature-settings: "pnum" 0; /* Use proportional numbers */
     font-family: ${themeVal('type.heading.family')};
@@ -15,38 +20,8 @@ const Dl = styled.dl`
     line-height: 1.25rem;
   }
 
-  dd, dt {
-    margin: 0 0 ${divide(themeVal('layout.space'), 2)} 0;
-  }
-
-  dt:last-of-type,
-  dd:last-child {
-    margin-bottom: 0;
-  }
-
   ${/* sc-declaration */({ type }) => type === 'horizontal' && css`
-    ${clearFix()}
-
-    dd {
-      width: 64%;
-      padding-left: ${divide(themeVal('layout.space'), 2)};
-    }
-
-    dd + dd {
-      margin-left: 36%;
-    }
-
-    dt, dd {
-      float: left;
-    }
-
-    dt {
-      width: 36%;
-      clear: left;
-      padding-top: ${divide(themeVal('layout.space'), 8)};
-      padding-bottom: ${divide(themeVal('layout.space'), 8)};
-      padding-right: ${divide(themeVal('layout.space'), 2)};
-    }
+    grid-template-columns: max-content max-content;
   `}
 `;
 
