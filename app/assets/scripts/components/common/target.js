@@ -242,7 +242,8 @@ var Chart = function (options) {
           // so it's rendered on the top-left.
           .attr('cx', d => cartesianX.invert(d.hit.cx) || 0)
           .attr('cy', d => cartesianY.invert(d.hit.cy) || 0)
-          .attr('fill', 'none')
+          .attr('fill', '#041334')
+          .attr('fill-opacity', 0.16)
           .attr('pointer-events', 'all')
           .attr('cursor', 'grab')
           .on('mousedown', function () { d3.select(this).attr('cursor', 'grabbing'); })
