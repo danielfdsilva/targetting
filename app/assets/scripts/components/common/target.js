@@ -19,7 +19,7 @@ class Target extends Component {
   componentDidMount () {
     // console.log('ChartMeasurement componentDidMount');
     // Debounce event.
-    this.onWindowResize = debounce(this.onWindowResize, 200);
+    this.onWindowResize = debounce(this.onWindowResize.bind(this), 200);
 
     window.addEventListener('resize', this.onWindowResize);
     this.chart = Chart();
