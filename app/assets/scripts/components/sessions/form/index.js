@@ -16,6 +16,7 @@ import {
 import FormLabel from '../../../styles/form/label';
 import FormInput from '../../../styles/form/input';
 import FormSelect from '../../../styles/form/select';
+import FormTextarea from '../../../styles/form/textarea';
 import Button from '../../../styles/button/button';
 import { addSession, updateSession } from '../../../redux/sessions';
 import { generateSessionId } from '../../../utils/utils';
@@ -63,6 +64,7 @@ class SessionForm extends Component {
         name: session.name,
         date: session.date,
         distance: session.distance,
+        notes: session.notes,
         target: session.config.target,
         rounds: session.config.rounds,
         arrows: session.config.arrows
@@ -73,6 +75,7 @@ class SessionForm extends Component {
       name: '',
       date: new Date().toISOString().substring(0, 10),
       distance: 18,
+      notes: '',
       target: targetList[0].id,
       rounds: 10,
       arrows: {
@@ -99,7 +102,7 @@ class SessionForm extends Component {
         },
         target: values.target
       },
-      hits: []
+      notes: values.notes
     };
 
     if (session) {
@@ -286,6 +289,18 @@ class SessionForm extends Component {
                       />
                     </FormFieldsetBody>
                   </FormFieldset>
+
+                  <FormGroup>
+                    <FormLabel>Notes</FormLabel>
+                    <FormTextarea
+                      size='large'
+                      name='notes'
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.notes}
+                      invalid={hasError('notes')}
+                    />
+                  </FormGroup>
                 </Form>
               </Constrainer>
             </App>
