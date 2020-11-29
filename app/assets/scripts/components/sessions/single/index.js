@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { PropTypes as T } from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch } from 'react-router-dom';
 
 import collecticon from '../../../styles/collecticons';
 import { deleteSession } from '../../../redux/sessions';
@@ -106,17 +106,30 @@ class SessionSingle extends Component {
         renderActions={this.renderAppBarActions.bind(this)}
       >
         <Constrainer>
-          {!isComplete && (
-            <FabButton
-              as={CleanLink}
-              to={`/sessions/${match.params.id}/hits/${
-                session.hits.length + 1
-              }`}
-              useIcon='plus--small'
-            >
-              <span>Score</span>
-            </FabButton>
-          )}
+          <Switch>
+            <Route exact path={`${match.path}/overview`}>
+              <FabButton
+                element={Link}
+                to={`/sessions/${match.params.id}/edit`}
+                useIcon='pencil'
+              >
+                <span>Score</span>
+              </FabButton>
+            </Route>
+            <Route path='*'>
+              {!isComplete && (
+                <FabButton
+                  as={CleanLink}
+                  to={`/sessions/${match.params.id}/hits/${
+                    session.hits.length + 1
+                  }`}
+                  useIcon='plus--small'
+                >
+                  <span>Score</span>
+                </FabButton>
+              )}
+            </Route>
+          </Switch>
           <TabsNav items={tabNavigation} />
           <Switch>
             <Route exact path={`${match.path}/overview`}>

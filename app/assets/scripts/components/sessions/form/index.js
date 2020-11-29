@@ -17,7 +17,7 @@ import FormLabel from '../../../styles/form/label';
 import FormInput from '../../../styles/form/input';
 import FormSelect from '../../../styles/form/select';
 import Button from '../../../styles/button/button';
-import { addSession } from '../../../redux/sessions';
+import { addSession, updateSession } from '../../../redux/sessions';
 import { generateSessionId } from '../../../utils/utils';
 import { targets } from '../../../utils/targets';
 import { arrows } from '../../../utils/arrows';
@@ -57,7 +57,18 @@ class SessionForm extends Component {
     this.renderAppBarActions = this.renderAppBarActions.bind(this);
   }
 
-  getInitialFormValues () {
+  getInitialFormValues (session) {
+    if (session) {
+      return {
+        name: session.name,
+        date: session.date,
+        distance: session.distance,
+        target: session.config.target,
+        rounds: session.config.rounds,
+        arrows: session.config.arrows
+      };
+    }
+
     return {
       name: '',
       date: new Date().toISOString().substring(0, 10),
@@ -66,16 +77,15 @@ class SessionForm extends Component {
       rounds: 10,
       arrows: {
         type: arrowsList[0].id,
-        ids: ['Arrow #1', 'Arrow #2', 'Arrow #3']
+        ids: ['', '', '']
       }
     };
   }
 
   onFromSubmit (values) {
-    const { addSession, history } = this.props;
-    const id = generateSessionId();
-    addSession({
-      id,
+    const { addSession, updateSession, session, history } = this.props;
+    const id = session.id || generateSessionId();
+    const basePayload = {
       name: values.name,
       date: values.date,
       distance: values.distance,
@@ -83,12 +93,24 @@ class SessionForm extends Component {
         rounds: values.rounds,
         arrows: {
           type: values.arrows.type,
-          ids: values.arrows.ids
+          ids: values.arrows.ids.map((n, i) =>
+            !n.trim() ? `Arrow #${i + 1}` : n
+          )
         },
         target: values.target
       },
       hits: []
-    });
+    };
+
+    if (session) {
+      updateSession(id, basePayload);
+    } else {
+      addSession({
+        id,
+        hits: [],
+        ...basePayload
+      });
+    }
 
     history.push(`/sessions/${id}`);
   }
@@ -102,14 +124,6 @@ class SessionForm extends Component {
     const rounds = Number(values.rounds);
     if (isNaN(rounds) || !Number.isInteger(rounds)) {
       errors.rounds = 'Rounds must be a integer number';
-    }
-
-    const arrowIdErrors = values.arrows.ids.map(id =>
-      !id.trim() ? "Arrow identifier can't be empty" : ''
-    );
-
-    if (arrowIdErrors.some(o => !!o)) {
-      errors.arrows = { ids: arrowIdErrors };
     }
 
     return errors;
@@ -129,9 +143,11 @@ class SessionForm extends Component {
   }
 
   render () {
+    const { session } = this.props;
+
     return (
       <Formik
-        initialValues={this.getInitialFormValues()}
+        initialValues={this.getInitialFormValues(session)}
         validate={this.onFormValidate}
         onSubmit={this.onFromSubmit}
       >
@@ -144,7 +160,7 @@ class SessionForm extends Component {
           handleSubmit,
           isSubmitting
         }) => {
-          const hasError = name =>
+          const hasError = (name) =>
             get(touched, name, false) && get(errors, name, false);
 
           const renderInputFormGroup = (label, type, path) => (
@@ -161,7 +177,7 @@ class SessionForm extends Component {
             </FormGroup>
           );
 
-          const renderInputField = (type, path) => (
+          const renderInputField = (type, path, placeholder) => (
             <FormInput
               size='large'
               type={type}
@@ -169,13 +185,14 @@ class SessionForm extends Component {
               onChange={handleChange}
               onBlur={handleBlur}
               value={get(values, path)}
+              placeholder={placeholder}
               invalid={hasError(path)}
             />
           );
 
           return (
             <App
-              pageTitle='New Session'
+              pageTitle={session ? `Editing ${session.name}` : 'New Session'}
               backTo='/'
               renderActions={() =>
                 this.renderAppBarActions(isSubmitting, handleSubmit)}
@@ -194,8 +211,10 @@ class SessionForm extends Component {
                       onBlur={handleBlur}
                       value={values.target}
                     >
-                      {targetList.map(t => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
+                      {targetList.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name}
+                        </option>
                       ))}
                     </FormSelect>
                   </FormGroup>
@@ -212,15 +231,17 @@ class SessionForm extends Component {
                           onBlur={handleBlur}
                           value={values.arrows.type}
                         >
-                          {arrowsList.map(t => (
-                            <option key={t.id} value={t.id}>{t.name}</option>
+                          {arrowsList.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.name}
+                            </option>
                           ))}
                         </FormSelect>
                       </FormGroup>
 
                       <FieldArray
                         name='arrows.ids'
-                        render={arrayHelpers => (
+                        render={(arrayHelpers) => (
                           <FormGroup>
                             <FormGroupHeader>
                               <FormLabel>Arrows</FormLabel>
@@ -253,7 +274,8 @@ class SessionForm extends Component {
                                   <FormGroupBody>
                                     {renderInputField(
                                       'text',
-                                      `arrows.ids[${idx}]`
+                                      `arrows.ids[${idx}]`,
+                                      `Arrow #${idx + 1}`
                                     )}
                                   </FormGroupBody>
                                 </FormGroup>
@@ -276,20 +298,25 @@ class SessionForm extends Component {
 
 SessionForm.propTypes = {
   history: T.object,
-  addSession: T.func
+  session: T.object,
+  addSession: T.func,
+  updateSession: T.func
 };
 
 function mapStateToProps (state, props) {
-  return {};
+  const id = props.match.params.id;
+  return id
+    ? {
+      session: state.sessions.find((s) => s.id === id)
+    }
+    : {};
 }
 
 function dispatcher (dispatch) {
   return {
-    addSession: (...args) => dispatch(addSession(...args))
+    addSession: (...args) => dispatch(addSession(...args)),
+    updateSession: (...args) => dispatch(updateSession(...args))
   };
 }
 
-export default connect(
-  mapStateToProps,
-  dispatcher
-)(SessionForm);
+export default connect(mapStateToProps, dispatcher)(SessionForm);

@@ -45,6 +45,7 @@ class Root extends React.Component {
                 <Route exact path='/' component={Home} />
                 <Route exact path='/sessions' component={Home} />
                 <Route exact path='/sessions/new' component={SessionForm} />
+                <Route exact path='/sessions/:id/edit' component={SessionForm} />
                 <Route exact path='/sessions/:id/hits/:round' component={RegisterHits} />
                 <Route path='/sessions/:id' component={SessionSingle} />
                 <Route path='*' component={UhOh} />
