@@ -31,22 +31,15 @@ const TargetList = styled.ul`
 const TargetListItem = styled.li`
   display: grid;
   grid-gap: ${glsp()};
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
-
-  > ${Heading} {
-    grid-column: span 2;
-  }
 `;
 
 const TargetHeatmap = styled.div`
-  grid-column: span 1;
   width: 15rem;
 `;
 
 const TargetStats = styled.div`
-  grid-column: span 1;
-
   ${Dl} {
     grid-row-gap: ${glsp(0.5)};
   }
@@ -64,13 +57,13 @@ const ArrowId = styled(Heading)`
 `;
 
 const HitTargets = styled.section`
-  > ${Heading} {
+  h1 {
     ${visuallyHidden()}
   }
 `;
 
 const HitBreakdown = styled.section`
-  > ${Heading} {
+  h1 {
     ${visuallyHidden()}
   }
 
@@ -152,7 +145,7 @@ function Analytics (props) {
   return (
     <Inpage>
       <HitTargets>
-        <Heading>Targets</Heading>
+        <h1>Targets</h1>
         <TargetList>
           {arrows.ids.map((a, aIdx) => {
             const arrowStats = getArrowStats(aIdx);
@@ -189,7 +182,7 @@ function Analytics (props) {
         </TargetList>
       </HitTargets>
       <HitBreakdown>
-        <Heading size='medium'>Breakdown</Heading>
+        <h1>Breakdown</h1>
         <Table>
           <thead>
             <tr>
