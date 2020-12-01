@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Archery scoring application" />
+
+    <title>Targetting</title>
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/graphics/meta/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/graphics/meta/android-chrome.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/graphics/meta/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i" />
+
+    
+
+    <style>
+      #welcome-banner {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        background: #d62828;
+        color: #fff;
+        margin: 0;
+        padding: 1rem;
+        font-family: "Open Sans", sans-serif;
+        font-weight: bold;
+        font-size: 1.25rem;
+
+        transition: all 320ms ease-in-out;
+      }
+      
+      #welcome-banner h1 {
+        margin: 0 0 1rem 0;
+      }
+      
+      #welcome-banner.dismissed {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
+
+    <!-- Start Single Page Apps for GitHub Pages -->
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      // This script checks to see if a redirect is present in the query string,
+      // converts it back into the correct url and adds it to the
+      // browser's history using window.history.replaceState(...),
+      // which won't cause the browser to attempt to load the new url.
+      // When the single page app is loaded further down in this file,
+      // the correct url will be waiting in the browser's history for
+      // the single page app to route accordingly.
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <!-- End Single Page Apps for GitHub Pages -->
+
+  </head>
+  <body>
+    <!-- Welcome banner gets hidden by React -->
+    <div id='welcome-banner'>
+      <h1><img src="/assets/graphics/layout/targetting_white.svg" alt="Targetting logotype" width="180" height="180" /></h1>
+      <p>Loading Targetting</p>
+    </div>
+
+    <div id="app-container">
+      <!-- Content rendered here via React -->
+    </div>
+
+    <script src="/assets/scripts/vendor-f42f923405.js"></script>
+    <script src="/assets/scripts/bundle-1b607a8b68.js"></script>
+
+  </body>
+</html>
