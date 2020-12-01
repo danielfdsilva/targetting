@@ -87,7 +87,7 @@ class SessionForm extends Component {
 
   onFromSubmit (values) {
     const { addSession, updateSession, session, history } = this.props;
-    const id = session.id || generateSessionId();
+    const id = session ? session.id : generateSessionId();
     const basePayload = {
       name: values.name,
       date: values.date,
